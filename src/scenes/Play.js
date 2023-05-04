@@ -1,6 +1,7 @@
 class Play extends Phaser.Scene {
     constructor() {
         super("playScene");
+        this.speedUp = false;
     }
     preload() {
         // load images/tile sprites
@@ -20,7 +21,7 @@ class Play extends Phaser.Scene {
         this.background = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'background').setOrigin(0, 0);
         this.starfield = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'starfield').setOrigin(0, 0);
 
-        this.starship = this.add.image(650, 720, 'starship');
+        this.starship = this.add.image(650, 700, 'starship');
 
         // define keys
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
@@ -31,8 +32,10 @@ class Play extends Phaser.Scene {
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         // add rockets
-        this.p1Rocket = new Rocket(this, 598, 710, 'rocketSheet', keyA, keyD, keyW).setOrigin(0.5, 0);
-        this.p2Rocket = new Rocket(this, 762, 710, 'rocketSheet', keyLEFT, keyRIGHT, keyUP).setOrigin(0.5, 0);
+        this.p1Rocket = new Rocket(this, 598, 690, 'rocketSheet', keyA, keyD, keyW).setOrigin(0.5, 0);
+        this.p2Rocket = new Rocket(this, 762, 690, 'rocketSheet', keyLEFT, keyRIGHT, keyUP).setOrigin(0.5, 0);
+        this.p1Rocket.scorePlayer.x -= 25;
+        this.p2Rocket.scorePlayer.x += 25;
         // add spaceships (x3)
         this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'spaceship', 0, 10, false).setOrigin(0, 0);
         this.ship01.setDisplaySize(64, 32);
@@ -44,7 +47,10 @@ class Play extends Phaser.Scene {
         this.ship03.setDisplaySize(64, 32);
         this.ship03.setSize(64, 32);
         this.falcon = new Spaceship(this, game.config.width, 0, 'falcon', 0, 40, true).setOrigin(0,0);
-        this.falcon.moveSpeed *= 3;
+        this.falcon.moveSpeed += 3;
+        this.ship01.reset();
+        this.ship02.reset();
+        this.ship03.reset();
         this.falcon.reset();
         // animation config
         this.anims.create({
@@ -103,6 +109,13 @@ class Play extends Phaser.Scene {
         this.checkCollision(this.p2Rocket, this.ship03);
         this.checkCollision(this.p1Rocket, this.falcon);
         this.checkCollision(this.p2Rocket, this.falcon);
+        if(!this.speedUp && this.clock.getElapsed() > 5000) {
+            this.speedUp = true;
+            this.ship01.moveSpeed *= 1.5;
+            this.ship02.moveSpeed *= 1.5;
+            this.ship03.moveSpeed *= 1.5;
+            this.falcon.moveSpeed *= 1.5;
+        }
     }
     checkCollision(rocket, ship) {
         // simple AABB checking
@@ -119,9 +132,20 @@ class Play extends Phaser.Scene {
         }
     }
     shipExplode(ship) {
+        // add 5 seconds to the clock when ship destroyed
+        this.clock.delay += 2000;
+        let text = this.add.text(this.timer.x + 60, this.timer.y, "+2!", scoreConfig);
+        // add a tween to fade the text away
+        this.tweens.add({
+            targets: text,
+            alpha: 0,
+            duration: 1000, // duration in milliseconds
+            ease: 'Linear',
+            onComplete: () => { text.destroy() } // when the tween is complete
+        });
         // temporarily hide ship
         ship.alpha = 0;                         
-        // create explosion sprite at ship's position
+        // create explosion sprite at ship's position\
         let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
         boom.anims.play('explode');             // play explode animation
         boom.on('animationcomplete', () => {    // callback after ani completes

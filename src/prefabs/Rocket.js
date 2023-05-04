@@ -85,6 +85,21 @@ class Rocket extends Phaser.GameObjects.Sprite {
         this.scoreMultiplier = 1;
     }
     score(ship) {
+        let t;
+        if(this.scoreMultiplier > 1)
+            t = `+${ship.points} X ${this.scoreMultiplier}!`
+        else
+            t = `+${ship.points}`
+        let text = this.scene.add.text(this.x + 10, this.y + 10, t, scoreConfig);
+        text.fontSize = '8px';
+        // add a tween to fade the text away
+        this.scene.tweens.add({
+            targets: text,
+            alpha: 0,
+            duration: 1000, // duration in milliseconds
+            ease: 'Linear',
+            onComplete: () => { text.destroy() } // when the tween is complete
+        });
         this.Score += (ship.points * this.scoreMultiplier);
         this.scorePlayer.text = this.Score;
     }

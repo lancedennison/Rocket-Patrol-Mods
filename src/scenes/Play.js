@@ -109,7 +109,7 @@ class Play extends Phaser.Scene {
         this.checkCollision(this.p2Rocket, this.ship03);
         this.checkCollision(this.p1Rocket, this.falcon);
         this.checkCollision(this.p2Rocket, this.falcon);
-        if(!this.speedUp && this.clock.getElapsed() > 5000) {
+        if(!this.speedUp && this.clock.getElapsed() > 30000) {
             this.speedUp = true;
             this.ship01.moveSpeed *= 1.5;
             this.ship02.moveSpeed *= 1.5;

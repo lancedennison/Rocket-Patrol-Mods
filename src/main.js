@@ -18,15 +18,40 @@ let borderUISize = game.config.height / 15;
 let borderPadding = borderUISize / 3;
 // reserve keyboard vars
 let keyR, keyLEFT, keyRIGHT, keyUP, keyA, keyD, keyW;
-let scoreConfig = {
-    fontFamily: 'Courier',
+// set text configs
+let menuConfig = {
+    //fontFamily: 'StarJedi',
     fontSize: '28px',
-    backgroundColor: '#F3B141',
-    color: '#843605',
+    color: '#ffffff',
     align: 'right',
     padding: {
-    top: 5,
-    bottom: 5,
+    x: 20,
+    y: 5
+    },
+    fixedWidth: 0
+}
+let scoreConfig = {
+    //fontFamily: 'StarJedi',
+    fontSize: '28px',
+    color: '#ffffff',
+    align: 'right',
+    padding: {
+    x: 10,
+    y: 5
+    },
+    fixedWidth: 100
+}
+let timerConfig = {
+    //fontFamily: 'StarJedi',
+    fontSize: '28px',
+    // shadow: {
+    //     color: '#ffffff'
+    // },
+    color: '#ffffff',
+    align: 'right',
+    padding: {
+    x: 10,
+    y: 5
     },
     fixedWidth: 100
 }
